@@ -47,3 +47,4 @@ build/**
 
 # Other
 clean-src.sh
+*.hprof

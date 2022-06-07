@@ -1,20 +1,26 @@
 plugins {
-    val kotlinVersion = "1.6.21"
+    val kotlinVersion: String by System.getProperties()
     kotlin("multiplatform") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("com.android.library") version "7.2.0"
 }
 
 group = "com.globus.shoppinglist"
-version = "1.0-SNAPSHOT"
+version = "0.0.1"
+val shareTargetSdk = 32
+val shareMinSdk = 24
+
+//Dependencies versions
+val kotlinVersion: String by System.getProperties()
+val coroutinesVersion = "1.6.2"
+val serializationVersion = "1.3.2"
+val kodeinVersion = "7.12.0"
+val ktorVersion = "2.0.2"
 
 repositories {
     google()
     mavenCentral()
 }
-
-val shareTargetSdk = 32
-val shareMinSdk = 24
 
 kotlin {
     android("androidPD")
@@ -31,7 +37,21 @@ kotlin {
 
     sourceSets {
     //SHARED
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
+
+                //DI - Kodein 7.12.0
+                implementation("org.kodein.di:kodein-di:$kodeinVersion")
+
+
+                // HTTP - Ktor
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -41,7 +61,13 @@ kotlin {
         val androidPDMain by getting {
             dependencies {
                 rootProject
-                implementation("com.google.android.material:material:1.6.0")
+                api("com.google.android.material:material:1.6.0")
+                // HTTP - Ktor
+                api("io.ktor:ktor-client-okhttp:$ktorVersion")
+
+                //Coroutines
+                //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
             }
         }
         val androidPDTest by getting {
@@ -60,6 +86,8 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
+                // HTTP - Ktor
+                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
             }
         }
 
