@@ -1,12 +1,16 @@
 package com.globus.shoppinglist.shared.network.data.auth
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class User(
-    val created_at: Long,
     val email: String? = null,
     val id: String,
-    val is_activated: Boolean,
-    val is_deleted: Boolean,
     val name: String,
     val phone: Long,
-    val updated_at: Long
+    @SerialName("is_activated") val isActivated: Boolean,
+    @SerialName("is_deleted") val isDeleted: Boolean,
+    @SerialName("created_at") val createdAt: Long,
+    @SerialName("updated_at") val updatedAt: Long
 )

@@ -15,39 +15,18 @@ import kotlin.native.concurrent.ThreadLocal
  * @see [authInteractor] - провайдим интерактор авторизации
  *
  * [ThreadLocal] - аннотация для более правильного управления памятью на iOS
- *
- * [Deprecated] @see [SLSDK]
  */
-@Deprecated("Закрыл этот класс потмоу, что не может инициализироваться нормально")
 @ThreadLocal
-object SoppingListSDK {
+object SLSDK {
 
-    private val di: DirectDI
-        get() = requireNotNull(_di)
-    private var _di: DirectDI? = null
-
-    /**
-     * Инициализация конфигурации и провайдинг зависимостей
-     */
-    fun init(configuration: Configuration) {
-        val configurationModule = DI.Module("ConfigurationModule") {
-            bindSingleton { configuration }
-        }
-
-        if (_di != null) {
-            _di = null
-        }
-
-        val direct = DI {
+    init {
+        DI {
             importAll(
-                configurationModule,
                 ktorModule,
                 repositoryModule
             )
-        }.direct
-
-        _di = direct
+        }
     }
 
-    val authInteractor: AuthInteractor = di.instance()
+    val authInteractor: AuthInteractor = DI.direct(){}.instance()
 }
